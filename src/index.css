@@ -1,0 +1,424 @@
+:root {
+  --paper: #fbfbf7;
+  --graph-blue: #bfd8e4;
+  --pen-red: #ce3a32;
+  --pen-blue: #2b54c4;
+  --graphite: #33322f;
+  --highlight-yellow: #f5d547;
+
+  --font-hand: 'Caveat', 'Segoe Script', 'Bradley Hand', cursive;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+}
+
+body {
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(to right, rgba(43, 84, 196, 0.075) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(43, 84, 196, 0.075) 1px, transparent 1px),
+    linear-gradient(to right, rgba(43, 84, 196, 0.16) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(43, 84, 196, 0.16) 1px, transparent 1px);
+  background-size:
+    24px 24px,
+    24px 24px,
+    120px 120px,
+    120px 120px;
+  color: var(--graphite);
+  font-family: var(--font-mono);
+  line-height: 1.5;
+}
+
+.sheet {
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: clamp(1.25rem, 4vw, 2.75rem) clamp(1rem, 4.5vw, 2rem) 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9rem;
+  min-height: 100svh;
+}
+
+/* ---------- masthead ---------- */
+
+.masthead {
+  text-align: center;
+}
+
+.eyebrow {
+  margin: 0 0 0.35rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--graphite);
+  opacity: 0.75;
+}
+
+.title {
+  position: relative;
+  margin: 0;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: clamp(3.1rem, 11vw, 4.6rem);
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+
+.title-underline {
+  display: block;
+  width: min(58%, 13rem);
+  height: auto;
+  margin: -0.15rem auto 0;
+}
+
+.title-underline path {
+  fill: none;
+  stroke: var(--pen-red);
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  animation: draw-on 0.32s ease-out both;
+}
+
+/* ---------- status ---------- */
+
+.status {
+  isolation: isolate;
+  margin: 0.4rem 0 0.2rem;
+  min-height: 2.4rem;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.status-text {
+  position: relative;
+  display: inline-block;
+  padding: 0.05rem 0.45rem;
+}
+
+.status-text::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 12% -1% 16%;
+  background: var(--highlight-yellow);
+  transform-origin: left center;
+  animation: swipe-in 0.28s ease-out both;
+}
+
+.status-human .status-text {
+  color: var(--pen-red);
+}
+
+.status-computer .status-text {
+  color: var(--pen-blue);
+}
+
+.status-outcome {
+  font-family: var(--font-hand);
+  font-size: 2.1rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.status-outcome .status-text::before {
+  inset: 30% -2% 8%;
+}
+
+.status-draw .status-text {
+  color: var(--graphite);
+}
+
+/* ---------- board ---------- */
+
+.board-wrap {
+  position: relative;
+  width: min(88vw, 25rem);
+  aspect-ratio: 1;
+}
+
+.grid-lines,
+.strike {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.rule {
+  fill: none;
+  stroke: var(--graphite);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  opacity: 0.82;
+  stroke-dasharray: 1;
+  animation: draw-on 0.3s ease-out both;
+}
+
+.rule-2 {
+  animation-delay: 0.06s;
+}
+
+.rule-3 {
+  animation-delay: 0.12s;
+}
+
+.rule-4 {
+  animation-delay: 0.18s;
+}
+
+.board {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.cell {
+  appearance: none;
+  border: 0;
+  margin: 0;
+  padding: 8%;
+  background: transparent;
+  cursor: pointer;
+  position: relative;
+}
+
+.cell:focus-visible {
+  outline: 2px dashed var(--graphite);
+  outline-offset: -8px;
+}
+
+.cell-open:hover .ghost {
+  opacity: 0.14;
+}
+
+.cell:disabled {
+  cursor: default;
+}
+
+.ghost {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 8%;
+  box-sizing: border-box;
+  opacity: 0;
+  transition: opacity 0.15s ease-out;
+}
+
+.ghost path {
+  fill: none;
+  stroke: var(--pen-red);
+  stroke-width: 9;
+  stroke-linecap: round;
+}
+
+.mark {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 8%;
+  box-sizing: border-box;
+}
+
+.mark path {
+  fill: none;
+  stroke-width: 8.5;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  animation: write-on 0.22s ease-out both;
+}
+
+.ink-red path,
+.ink-red .stroke-path,
+.ink-red .strike-path {
+  stroke: var(--pen-red);
+}
+
+.ink-blue path,
+.ink-blue .strike-path {
+  stroke: var(--pen-blue);
+}
+
+.stroke-2 {
+  animation-delay: 0.14s !important;
+}
+
+.stroke-single {
+  animation-duration: 0.3s;
+}
+
+.strike-path {
+  fill: none;
+  stroke-width: 7;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  animation: draw-on 0.38s ease-out 0.5s both;
+}
+
+/* ---------- tally ---------- */
+
+.tally {
+  display: flex;
+  gap: clamp(1.2rem, 5vw, 2.4rem);
+  margin: 0.7rem 0 0;
+}
+
+.tally-row {
+  text-align: center;
+}
+
+.tally-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  opacity: 0.75;
+}
+
+.tally-marks {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.28rem;
+  min-height: 1.7rem;
+  margin: 0;
+}
+
+.tally-one,
+.tally-five {
+  stroke: var(--graphite);
+}
+
+.tally-one {
+  width: 0.45rem;
+  height: 1.35rem;
+}
+
+.tally-five {
+  width: 1.65rem;
+  height: 1.35rem;
+}
+
+.tally-one line,
+.tally-five line {
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
+.tally-zero {
+  opacity: 0.3;
+  letter-spacing: 0.1em;
+}
+
+/* ---------- controls ---------- */
+
+.controls {
+  display: flex;
+  gap: clamp(1.2rem, 5vw, 2.2rem);
+  margin-top: 0.4rem;
+}
+
+.control {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 0.35rem 0.15rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  color: var(--graphite);
+  border-bottom: 1.5px solid currentcolor;
+  cursor: pointer;
+}
+
+.control:hover {
+  background-image: linear-gradient(transparent 55%, var(--highlight-yellow) 55%);
+}
+
+.control:focus-visible {
+  outline: 2px dashed var(--graphite);
+  outline-offset: 3px;
+}
+
+.control-quiet {
+  opacity: 0.72;
+}
+
+.fine-print {
+  margin-top: auto;
+  padding-top: 1.6rem;
+  font-size: 0.7rem;
+  letter-spacing: 0.04em;
+  opacity: 0.55;
+  text-align: center;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- motion ---------- */
+
+@keyframes draw-on {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes write-on {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes swipe-in {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .ghost {
+    transition: none;
+  }
+}
